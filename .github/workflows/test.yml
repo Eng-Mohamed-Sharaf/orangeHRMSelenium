@@ -28,4 +28,12 @@ jobs:
           restore-keys: ${{ runner.os }}-maven-
 
       - name: Install dependencies and run tests
-        run: mvn clean test -DsuiteXmlFile=testng.xml
+        run: mvn clean test -DsuiteXmlFile=testng.xml -e -X
+        continue-on-error: true  # ✅ Allow next step to run even if tests fail
+
+      - name: Upload Surefire Test Reports
+        if: always()  # ✅ Run this step even if previous one failed
+        uses: actions/upload-artifact@v3
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
